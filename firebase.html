@@ -29,25 +29,11 @@
         const app = initializeApp(firebaseConfig)
         const auth = getAuth(app)
 
-        const signup = async () => {
-            console.log("SIgning up...")
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, "peter.babs.dev@gmail.com", "Test1234")
-                if (userCredential.user) {
-                    // redirect user to login
-                    sendEmailVerification(userCredential.user)
-                    window.location.href = "./login.html"
-                    // send email verification
-                }
-            } catch (error) {
-                console.log(error)
-            } finally {
-                console.log("Done!")
-            }
-        }
+        // login
+        // authState
+        // firestore DB
 
-        // 
-        // signup()
+        
 
 
     </script>

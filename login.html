@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in</title>
+</head>
+
+<style>
+    .login-con {
+        width: 90vw;
+        max-width: 400px;
+        margin: 4rem auto;
+        border: 1px solid;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        input,
+        button {
+            padding: .5rem 1rem;
+        }
+
+        #login-btn {
+            background-color: black;
+            color: white;
+            border: none;
+
+        }
+
+        #login-btn:disabled {
+            background-color: #333;
+            cursor: not-allowed;
+        }
+    }
+</style>
+
+<body>
+    <div class="login-con">
+        <h1>Login</h1>
+        <form id="login-form">
+            <div>
+                <label for="email">Email</label>
+                <input type="email" name="" id="email">
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" name="" id="password">
+            </div>
+
+            <button id="login-btn">Login</button>
+        </form>
+    </div>
+</body>
+
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyD37mI-m1x1kfRRmR4loaJsNx-zz5Hv_84",
+        authDomain: "augecommerce-769b9.firebaseapp.com",
+        projectId: "augecommerce-769b9",
+        storageBucket: "augecommerce-769b9.firebasestorage.app",
+        messagingSenderId: "319596472019",
+        appId: "1:319596472019:web:911f4158917a957b841626"
+    };
+
+    const loginFormEl = document.getElementById("login-form")
+    const emailEl = document.getElementById("email")
+    const passwordEl = document.getElementById("password")
+    const loginBtnEl = document.getElementById("login-btn")
+
+
+    const app = initializeApp(firebaseConfig)
+    const auth = getAuth(app)
+
+    const login = async () => {
+        loginBtnEl.disabled = true
+        loginBtnEl.textContent = "Authenticating..."
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, emailEl.value, passwordEl.value)
+            if (userCredential.user) {
+                window.location.href = "./dashboard.html"
+                console.log(userCredential)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            loginBtnEl.disabled = false
+            loginBtnEl.textContent = "Login"
+        }
+    }
+
+    loginFormEl.addEventListener("submit", (e) => {
+        e.preventDefault()
+        login()
+    })
+    // login()
+
+</script>
+
+</html>

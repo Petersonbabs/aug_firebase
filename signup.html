@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Sign up
+    <form id="signup-form">
+        <div>
+            <label for="">Email</label>
+            <input type="email" name="" id="email">
+        </div>
+        <div>
+            <label for="">Password</label>
+            <input type="password" name="" id="password">
+        </div>
+        <button id="signup-btn">Create Account</button>
+    </form>
+</body>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyD37mI-m1x1kfRRmR4loaJsNx-zz5Hv_84",
+        authDomain: "augecommerce-769b9.firebaseapp.com",
+        projectId: "augecommerce-769b9",
+        storageBucket: "augecommerce-769b9.firebasestorage.app",
+        messagingSenderId: "319596472019",
+        appId: "1:319596472019:web:911f4158917a957b841626"
+    };
+
+    const app = initializeApp(firebaseConfig)
+    const auth = getAuth(app)
+
+    // ELEMENT
+    const signupFormEl = document.getElementById("signup-form")
+    const emailEl = document.getElementById("email")
+    const passwordEl = document.getElementById("password")
+    const signupBtnEl = document.getElementById("signup-btn")
+
+    const signup = async () => {
+        console.log("SIgning up...")
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, emailEl.value, passwordEl.value)
+            if (userCredential.user) {
+                // redirect user to login
+                sendEmailVerification(userCredential.user)
+                window.location.href = "./login.html"
+                // send email verification
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            console.log("Done!")
+        }
+    }
+    signupFormEl.addEventListener("submit", (e) => {
+        e.preventDefault()
+        signup()
+    })
+
+</script>
+
+</html>
