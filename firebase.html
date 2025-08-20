@@ -9,12 +9,19 @@
 
 <h1>Intro to firebase</h1>
 
+<p>Hello <span id="user-email"></span></p>
+
+<button id="signup-btn">Signup</button>
+<button id="login-btn">login</button>
+<button id="logout-btn">logout</button>
+
+
 <body>
 
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
         const firebaseConfig = {
@@ -28,12 +35,75 @@
 
         const app = initializeApp(firebaseConfig)
         const auth = getAuth(app)
+        console.log(auth)
+        // HTML ELEMENTS
+        const signupBtnEl = document.getElementById("signup-btn")
+        const loginBtnEl = document.getElementById("login-btn")
+        const logoutBtnEl = document.getElementById("logout-btn")
+        const userEmailEl = document.getElementById("user-email")
 
-        // login
-        // authState
-        // firestore DB
+        // AUTHSTATE
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log(user)
+                userEmailEl.textContent = user.email
+            } else {
+                // redirect login
+                console.log("No user")
+            }
+        })
 
-        
+         // LOGOUT
+        const logout = async () => {
+            try {
+                await signOut(auth)
+            } catch (error) {
+                console.log(error)
+            } finally {
+                console.log("DONE")
+            }
+        }
+
+
+
+        // SIGNUP
+        const signup = async () => {
+            console.log("SIGNUP up...")
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, "ali23@gmail.com", "Test1234")
+                if (userCredential.user) {
+                    sendEmailVerification(userCredential.user)
+                    console.log(userCredential.user)
+                }
+            } catch (error) {
+                console.log(error)
+            } finally {
+                console.log("DONE!")
+            }
+        }
+
+        // LOGIN
+        const login = async () => {
+            console.log("authenticating...")
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, "hhh@gmail.com", "Test1234")
+                if (userCredential.user) {
+                    console.log(userCredential.user)
+                }
+            } catch (error) {
+                console.log(error)
+            } finally {
+                console.log("DONE!")
+            }
+        }
+
+      
+        signupBtnEl.addEventListener("click", signup)
+        loginBtnEl.addEventListener("click", login)
+        logoutBtnEl.addEventListener("click", logout)
+
+
+
 
 
     </script>
