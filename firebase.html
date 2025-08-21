@@ -22,6 +22,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getFirestore, setDoc, doc, collection } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
         const firebaseConfig = {
@@ -35,7 +36,10 @@
 
         const app = initializeApp(firebaseConfig)
         const auth = getAuth(app)
-        console.log(auth)
+        const DB = getFirestore(app)
+        const usersColRef = collection(DB, "users")
+
+        // console.log(auth)
         // HTML ELEMENTS
         const signupBtnEl = document.getElementById("signup-btn")
         const loginBtnEl = document.getElementById("login-btn")
@@ -53,7 +57,7 @@
             }
         })
 
-         // LOGOUT
+        // LOGOUT
         const logout = async () => {
             try {
                 await signOut(auth)
@@ -70,10 +74,16 @@
         const signup = async () => {
             console.log("SIGNUP up...")
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, "ali23@gmail.com", "Test1234")
+                const userCredential = await createUserWithEmailAndPassword(auth, "jaliok@gmail.com", "Test1234")
                 if (userCredential.user) {
                     sendEmailVerification(userCredential.user)
-                    console.log(userCredential.user)
+                    const newUser = {
+                        name: "Jaliko",
+                        email: "jaliok@gmail.com",
+                        gender: "Male"
+                    }
+                    const userDocRef = doc(usersColRef, userCredential.user.uid)
+                    await setDoc(userDocRef, newUser)
                 }
             } catch (error) {
                 console.log(error)
@@ -97,7 +107,7 @@
             }
         }
 
-      
+
         signupBtnEl.addEventListener("click", signup)
         loginBtnEl.addEventListener("click", login)
         logoutBtnEl.addEventListener("click", logout)

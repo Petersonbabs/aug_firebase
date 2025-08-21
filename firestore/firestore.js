@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, getDocs, getDoc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD37mI-m1x1kfRRmR4loaJsNx-zz5Hv_84",
@@ -11,8 +12,48 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
 const DB = getFirestore(app)
-const usersColRef = collection(DB, "users")
+const usersColRef = collection(DB, "users") // even
+let currentUser;
+
+const cartBtn = document.getElementById("add-to-cart")
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUser = user
+        console.log(currentUser)
+    } else {
+        // redirect to login page
+        console.log("No user")
+    }
+})
+
+const product = {
+    productName: "Nike shoe",
+    price: 500,
+    category: "fashion",
+    quantity: 2,
+    image: "https://img.ltwebstatic.com/v4/j/spmp/2025/05/08/72/1746689988a73bbb6bfdbbea0212f6332a393bd862_thumbnail_405x.webp"
+}
+const addToCart = async () => {
+    if (!currentUser) {
+        alert("You have to login to perform this action")
+        return
+    }
+    console.log("adding to cart...")
+    try {
+
+        const userCartsColRef = collection(DB, "users", currentUser.uid, "carts")
+        const docRef = await addDoc(userCartsColRef, product)
+
+        console.log(docRef)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+cartBtn.addEventListener("click", addToCart)
 
 const addUser = async () => {
     console.log("Adding....")
